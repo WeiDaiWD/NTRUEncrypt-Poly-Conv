@@ -1,0 +1,4 @@
+#!/bin/sh
+PATH="/home/wei/nacl-20110221/build/goku/bin:/usr/sfw/bin:/usr/local/bin:/home/wei/bin:/home/wei/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+export PATH
+ar "$@"
