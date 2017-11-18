@@ -1,0 +1,87 @@
+---
+title: "Plot Timing Measurements"
+output: html_notebook
+---
+
+Just in case you've never used R. You may download and install R and RStudio (seperately). Run the following code chunks one by one (important!).
+
+The 2nd and 3rd chunks plot and output a png file. Change "xrange" to a smaller value e.g. 1:100, because 10,000 measurements can take a while to plot.
+
+This html file is 
+
+```{r}
+## This code chunk gives staticstical values for a set of measurements.
+file = "ntru_prime_avx2.txt" ## measurements file
+num_scenarios = 2 ## for ntru encrypt this is 3
+data = matrix(read.table(file)[,1], ncol=num_scenarios, byrow=TRUE)
+options(scipen=999)
+stats = NULL
+for (i in 1:num_scenarios) {
+  column = data[,i]
+  stats = rbind(stats, c(mean(column), sd(column)))
+}
+stats = cbind(stats, stats[,2]/stats[,1])
+print(stats)
+col_names = c("Fixed Fixed", "Fixed Random", "Random Random")
+dimnames(stats) <- list(col_names[1:num_scenarios], 
+                        c("Mean", "SD", "SD/Mean"))
+print(stats)
+```
+
+```{r}
+## This code chunk review a plot.
+## Note: Install package "scales" if necessary.
+library(scales) # enables transparency of colors
+cols = c("darkorange3", "darkred", "dodgerblue")
+pchs = c("+", "x", "*")
+xrange = 1:length(nrow(data)) ## the range of all measurements to plot
+par(mar=c(2,6.25,1,2.0), ## bottom, left, top, right margins
+    ps=7, las=1, xaxs="i", yaxs="i")
+plot(xrange, data[xrange,1],
+     type="p", pch=pchs[1], cex=0.8, col=alpha(cols[1], 0.5),
+     xlab="", ylab="", main="",
+     xlim = c(min(xrange)-1, max(xrange)), ## x-axis limits
+     ylim = c(min(data), max(data))) ## y-axis limits, by default zoomed out
+lines(data[xrange,2], type="p", pch=pchs[2], cex=0.8, col=alpha(cols[2], 0.5))
+if (num_scenarios == 3)
+  lines(data[xrange,3], type="p", pch=pchs[3], cex=1, col=alpha(cols[3], 0.5))
+grid(col = "lightgray", lty = "dotted", lwd = par("lwd"), equilogs = TRUE)
+legends = c("fixed a(x) and fixed b(x)",
+           "fixed a(x) and random b(x)",
+           "random a(x) and random b(x)")
+legend("topright",
+       legend = legends[1:num_scenarios],
+       col=cols[1:num_scenarios], pch=pchs[1:num_scenarios])
+```
+
+```{r}
+## This code chunk output a png figure.
+## Note: Extremely slow when plotting 10,000 measures.
+##       Adjust y-axis limits manually to zoom in and out.
+library(scales)
+cols = c("darkorange3", "darkred", "dodgerblue")
+pchs = c("+", "x", "*")
+xrange = 1:length(nrow(data)) ## the range of all measurements to plot
+fig_file = "ntru_prime_avx2.png"
+png(fig_file,
+    width = 7.25, height = 1.7, units = "in", ## size of figure
+    res = 600, pointsize = 4)
+par(mar=c(2,6.25,1,2.0), ## bottom, left, top, right margins
+    ps=7, las=1, xaxs="i", yaxs="i")
+plot(xrange, data[xrange,1],
+     type="p", pch=pchs[1], cex=0.8, col=alpha(cols[1], 0.5),
+     xlab="", ylab="", main="",
+     xlim = c(min(xrange)-1, max(xrange)), ## x-axis limits
+     ylim = c(min(data), max(data))) ## y-axis limits, by default zoomed out
+lines(data[xrange,2], type="p", pch=pchs[2], cex=0.8, col=alpha(cols[2], 0.5))
+if (num_scenarios == 3)
+  lines(data[xrange,3], type="p", pch=pchs[3], cex=1, col=alpha(cols[3], 0.5))
+grid(col = "lightgray", lty = "dotted", lwd = par("lwd"), equilogs = TRUE)
+legends = c("fixed a(x) and fixed b(x)",
+           "fixed a(x) and random b(x)",
+           "random a(x) and random b(x)")
+legend("topright",
+       legend = legends[1:num_scenarios],
+       col=cols[1:num_scenarios], pch=pchs[1:num_scenarios])
+dev.off()
+```

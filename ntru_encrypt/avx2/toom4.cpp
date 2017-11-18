@@ -17,6 +17,7 @@ __mm256i_toom4__mm256i_toom3(
     if (n < 96)
     {
         grade_school_mul(r, a, b, n);
+        //__m256i_grade_school_mul_32(r, a, b, n);
         return -1;
     }
     if (n>384)

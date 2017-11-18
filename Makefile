@@ -2,7 +2,7 @@ Compile = g++
 
 HEADERS = results.h measure.h
 
-all: test_ntru_encrypt_c test_ntru_prime_c test_ntru_encrypt_avx2 test_ntru_prime_avx2
+all: test_ntru_encrypt_c test_ntru_encrypt_avx2 test_ntru_prime_c test_ntru_prime_avx2
 
 test_ntru_encrypt_c: test_ntru_encrypt_c.cpp ntru_encrypt/c/*.cpp ntru_encrypt/c/simd_poly.h $(HEADERS)
 	$(Compile) test_ntru_encrypt_c.cpp ntru_encrypt/c/*.cpp -std=c++11 -O3 -o test_ntru_encrypt_c
@@ -18,3 +18,5 @@ test_ntru_prime_avx2: test_ntru_prime_avx2.cpp ntru_prime/avx2/*.c ntru_prime/av
 
 clean:
 	rm test_ntru_encrypt_c test_ntru_prime_c test_ntru_encrypt_avx2 test_ntru_prime_avx2
+run:
+	sudo taskset -c 7 ./test_ntru_encrypt_c &&./test_ntru_encrypt_avx2 &&./test_ntru_prime_c &&./test_ntru_prime_avx2
